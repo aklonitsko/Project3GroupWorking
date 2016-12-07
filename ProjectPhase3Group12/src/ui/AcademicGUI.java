@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -196,7 +197,7 @@ implements ActionListener,TableModelListener, Observer {
 					mPnlAddtrans.add(panel);
 				}
 				
-				mBtnAddtransfer = new JButton("Add Transfer Information:");
+				mBtnAddtransfer = new JButton("Add Transfer Information");
 				mBtnAddtransfer.addActionListener(this);
 				mPnlAddtrans.add(mBtnAddtransfer);
 				
@@ -400,56 +401,13 @@ private JPanel createAcaPnl() {
 			message = "School added";
 		}
 		JOptionPane.showMessageDialog(null, message);
-		
-		String mprogramt = txfFieldtrans[0].getText();
-		if (mprogramt.length() == 0) {
-			JOptionPane.showMessageDialog(null, "Enter a school name");
-			txfFieldtrans[0].setFocusable(true);
-			return;
-		}
-		String mGPAt = txfFieldtrans[1].getText();
-		double mGPADOt = 0.0;
-		if (mGPAt.length() != 0) {
-			try {
-				mGPADOt = Double.parseDouble(mGPAt);
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(null, "Enter GPA as decimal");
-				txfFieldtrans[1].setText("");
-				txfFieldtrans[1].setFocusable(true);
-				return;
-			}
-		}
-		String mDegreeLvlt = txfFieldtrans[2].getText();
-		if (mDegreeLvlt.length() == 0) {
-			JOptionPane.showMessageDialog(null, "Enter a Degree Level");
-			txfFieldtrans[2].setFocusable(true);
-			return;
-		}
-		
-		//Adding To the collection
-		AcademicRecord mACt = mStudent.getAcademicRecord();
-		TransferSchool mTFt = new TransferSchool("0",mACt.getID(),mprogramt,mGPADOt,mDegreeLvlt);
-		mAC.addTransferSchool(mTF);
-		
-		String messaget = "Transfer School add failed";
-		if (mStudent.addAcademicRecord(mAC)) {
-			messaget = "School added";
-		}
-		JOptionPane.showMessageDialog(null, messaget);
-		
+			
 		
 	}
 
 
 	private void performAddAcad() {
-		txfField[0].setText(mStudent.getAcademicRecord().getProgram());
-		txfField[1].setText(mStudent.getAcademicRecord().getDegreeLevel());
-		txfField[2].setText(mStudent.getAcademicRecord().getGraduationTerm());
-		txfField[3].setText(mStudent.getAcademicRecord().getGraduationYear());
-		txfField[4].setText(mStudent.getAcademicRecord().getUWEmail());
-		txfField[5].setText(mStudent.getAcademicRecord().getExternalEmail());
-		txfField[6].setText(Double.toString(mStudent.getAcademicRecord().getGPA()));
-		// TODO Auto-generated method stub
+		
 		String mprogram = txfField[0].getText();
 		if (mprogram.length() == 0) {
 			JOptionPane.showMessageDialog(null, "Enter a program name");
@@ -502,8 +460,8 @@ private JPanel createAcaPnl() {
 		}
 		
 		AcademicRecord mAC;
-		mAC = new AcademicRecord(mStudent.getStudentID(), mprogram, mDegreeLvl, 
-				mGradTerm, mGradYear, muwEmail, mexEmail, mGPADO, null);
+		mAC = new AcademicRecord(mStudent.getID(), mprogram, mDegreeLvl, 
+				mGradTerm, mGradYear, muwEmail, mexEmail, mGPADO, new ArrayList<TransferSchool>());
 		
 		
 		String message = "Academic Record add failed";
