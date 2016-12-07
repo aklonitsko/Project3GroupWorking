@@ -37,7 +37,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	private static final long serialVersionUID = -8675309L;
 	
 	private ArrayList<Student> myStudentList;
-	private Student myStudent;
+	//private Student myStudent;
 	
 	private JButton myListButton;
 	private JButton mySearchButton;
@@ -68,12 +68,13 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
 		
 		setLayout(new BorderLayout());
-
+		myStudentList = getStudentData();
 		setUpComponents();
+		setVisible(true);
 		setSize(500, 500);
 	}
 
-	private ArrayList<Student> getStudentData(Student theStudent) {
+	private ArrayList<Student> getStudentData() {
 		try{
 			myStudentList = StudentCollection.getStudents();
 		}catch(Exception e){	
@@ -138,7 +139,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		addStudentPanel = new JPanel();
 		addStudentPanel.setLayout(new GridLayout(8, 0));
 		
-		String labelNames[] = { "StudentId", "First Name", "Last Name"};
+		String labelNames[] = {"StudentId", "First Name", "Last Name"};
 		
 		for (int i = 0; i < labelNames.length; i++) {
 			JPanel panel = new JPanel();
@@ -241,6 +242,8 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	 */
 	@Override
 	public void tableChanged(TableModelEvent theEvent) {
+		// add something here that can get the student box clicked and pass it to the main GUI for the other gui
+		//classes to use
 		int row = theEvent.getFirstRow();
 		int column = theEvent.getColumn();
 		
