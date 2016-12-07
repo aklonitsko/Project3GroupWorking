@@ -26,7 +26,7 @@ import student.Student;
  * @author Andrew,Brandon,Brian
  *
  */
-public class MainGUI extends JFrame implements PropertyChangeListener, Runnable {
+public class MainGUI extends JFrame implements PropertyChangeListener {
 
 
 	private static final long serialVersionUID = 1L;
@@ -112,17 +112,17 @@ public class MainGUI extends JFrame implements PropertyChangeListener, Runnable 
 	private JComponent makeTextPanel(String type) {
 		
 		JPanel panel = new JPanel();
-		
+		mRealStudent = ssg.getCurrentStudent();
 		if(type.equalsIgnoreCase("Student")) {
 			sGUI = new StudentGUI();
 			panel.add(sGUI);
 		} 
 		else if(type.equalsIgnoreCase("Employment")) {
-			panel.add(new EmploymentGUI(mStudent));
+			panel.add(new EmploymentGUI(mRealStudent));
 			System.out.println("after panel add");
 		}  
 		else if(type.equalsIgnoreCase("Academic")) {
-			panel.add(new AcademicGUI(mStudent));
+			panel.add(new AcademicGUI(mRealStudent));
 		}
 		else {
 			panel.add(new JLabel("Needs to be implemented!"));
@@ -142,16 +142,10 @@ public class MainGUI extends JFrame implements PropertyChangeListener, Runnable 
 		nNewUser =  (String) e.getNewValue();
 		ssg.setVisible(true);
 		}
+		System.out.println(e.getPropertyName());
+		if(e.getPropertyName() == "studentToReturn" ){
+			createTabs();
 		
-		
-		if(onlyOnce == 3 ){
-			try{	
-			Thread thread = new Thread(new MainGUI());
-				thread.start();
-				System.out.println("Hersdase");
-			}catch(Exception e33){
-				
-			}
 		}
 		onlyOnce++;
 
@@ -171,21 +165,7 @@ public class MainGUI extends JFrame implements PropertyChangeListener, Runnable 
 		}
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		boolean run = true;
-		while(run){
-			if(ssg.isVisible()){
-				System.out.println("here");
-			}else{
-				run = false;
-			}
-			
-		}
-		
-		
-	}
+
 	
 	
 	

@@ -264,6 +264,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
 			studentToReturn = myStudentList.get(row);
+			firePropertyChange("studentToReturn", null, studentToReturn);
 			setVisible(false);
 			System.out.println(tempStudent.getID());
 			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
