@@ -12,7 +12,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,13 +31,12 @@ import student.StudentCollection;
  * @author Andrew,Brandon,Brian
  *
  */
-public class StudentSearchGUI extends JFrame implements Observer, ActionListener, TableModelListener {
+public class ReportsGUI extends JPanel implements Observer, ActionListener, TableModelListener {
 
 	
 	private static final long serialVersionUID = -8675309L;
 	
 	private ArrayList<Student> myStudentList;
-	private Student studentToReturn;
 	//private Student myStudent;
 	
 	private JButton myListButton, mySearchButton, myAddButton;
@@ -62,7 +60,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	 * Use this for Item administration. Add components that contain the list,
 	 * search and add to this.
 	 */
-	public StudentSearchGUI() {
+	public ReportsGUI() {
 		//myStudent = theStudent;
 		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
 		
@@ -82,7 +80,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 			myData = new Object[myStudentList.size()][studentColumnNames.length];
 			for(int i = 0; i< myStudentList.size(); i++) {
 				Student tempStudent = myStudentList.get(i);
-				myData[i][0] = tempStudent.getID();
+				myData[i][0] = tempStudent.getStudentID();
 				//TODO Maybe pars gpa as string
 				myData[i][1] = tempStudent.getFirstName();
 				myData[i][2] = tempStudent.getLastName();
@@ -102,19 +100,22 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		
 		// A button panel at the top for list, search, add
 		buttonPanel = new JPanel();
-		myListButton = new JButton("Student List");
+		myListButton = new JButton("Student Graduated Year Vs E");
 		myListButton.addActionListener(this);
 
 		mySearchButton = new JButton("Student Search");
 		mySearchButton.addActionListener(this);
 
-		//myAddButton = new JButton("Add Student");
-		//myAddButton.addActionListener(this);
+		myAddButton = new JButton("Add Student");
+		myAddButton.addActionListener(this);
 
+		myAddButton = new JButton("Add Student");
+		myAddButton.addActionListener(this);
+		
 		buttonPanel.add(myListButton);
 		buttonPanel.add(mySearchButton);
 
-		//buttonPanel.add(myAddButton);
+		buttonPanel.add(myAddButton);
 		add(buttonPanel, BorderLayout.NORTH);
 
 		// List Panel
@@ -234,14 +235,6 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 			studentTextFields[0].setFocusable(true);
 			return;
 		}
-		Student temmpStudent;
-		temmpStudent = new Student(firstNameTemp, lstNameTemp);
-		String message = "Student add failed";
-		if (StudentCollection.add(temmpStudent)) {
-			message = "Student added";
-		}
-		JOptionPane.showMessageDialog(null, message);
-		
 	}
 	
 	/**
@@ -251,7 +244,6 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	public void tableChanged(TableModelEvent theEvent) {
 		// add something here that can get the student box clicked and pass it to the main GUI for the other gui
 		//classes to use
-		
 		int row = theEvent.getFirstRow();
 		int column = theEvent.getColumn();
 		
@@ -259,13 +251,8 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		String columnName = tempModel.getColumnName(column);
 		Object data = tempModel.getValueAt(row, column);
 		
-		
-		
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
-			studentToReturn = myStudentList.get(row);
-			setVisible(false);
-			System.out.println(tempStudent.getID());
 			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
 				JOptionPane.showMessageDialog(null, "Update failed");
 			}
@@ -273,10 +260,6 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 
 	}
 	
-	public Student getCurrentStudent(){
-		
-		return studentToReturn;
-	}
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub

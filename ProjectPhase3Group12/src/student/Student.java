@@ -40,7 +40,8 @@ public class Student extends Observable {
 	 * @param theEmployers for any employers the student already has.
 	 */
 	public Student(String theStudentID, String theFirstName, String theLastName, AcademicRecord theRecord, ArrayList<Employer> theEmployers) {
-		setStudentID(theStudentID);
+		myID = theStudentID;
+		//setStudentID(theStudentID);
 		myFirstName = theFirstName;
 		myLastName = theLastName;
 		myAcademicRecord = theRecord;
