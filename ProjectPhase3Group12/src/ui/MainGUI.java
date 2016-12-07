@@ -32,19 +32,32 @@ public class MainGUI extends JFrame implements PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane myTabbedPane;
 	private static Student mStudent;
-
+	private static Student mRealStudent;
+	private StudentGUI sGUI;
+	private String mUser;
+	private String nNewUser;
+	int onlyOnce = 0;
+	static StudentSearchGUI ssg;
+	
 	public static void main(String[] args) {
 		MainGUI frame = new MainGUI();
+		ssg = new StudentSearchGUI();
+		ssg.addPropertyChangeListener(frame);
+		ssg.setVisible(false);
 		UserSelectorGUI userSelector = new UserSelectorGUI();
+		
 
 		mStudent = new Student("andrew", "klonitsko");
 		mStudent.addEmployer(new Employer("THIS", "HERE"));
 		mStudent.addEmployer(new Employer("Now", "HERE"));
 		mStudent.addAcademicRecord(new AcademicRecord("Hello1", "Hello2", "Hello3", "Hello4", "Hello5", "Hello6", "Hello7", "hello1", 3.2, new ArrayList<TransferSchool>()));
 		
+		
 		// Display User selector GUI and listen to user selection
 		userSelector.addPropertyChangeListener(frame);
 		userSelector.setVisible(true);
+		
+		
 
 	}
 
@@ -97,17 +110,19 @@ public class MainGUI extends JFrame implements PropertyChangeListener {
 	//Something
 
 	private JComponent makeTextPanel(String type) {
-
+		
 		JPanel panel = new JPanel();
-		if(type.equalsIgnoreCase("Employment")) {
-			panel.add(new EmploymentGUI(mStudent));
+		mRealStudent = ssg.getCurrentStudent();
+		if(type.equalsIgnoreCase("Student")) {
+			sGUI = new StudentGUI();
+			panel.add(sGUI);
+		} 
+		else if(type.equalsIgnoreCase("Employment")) {
+			panel.add(new EmploymentGUI(mRealStudent));
 			System.out.println("after panel add");
-		} 
-		else if(type.equalsIgnoreCase("Student")) {
-			panel.add(new StudentGUI());
-		} 
+		}  
 		else if(type.equalsIgnoreCase("Academic")) {
-			panel.add(new AcademicGUI(mStudent));
+			panel.add(new AcademicGUI(mRealStudent));
 		}
 		else {
 			panel.add(new JLabel("Needs to be implemented!"));
@@ -120,21 +135,38 @@ public class MainGUI extends JFrame implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
 		// TODO Auto-generated method stub
-
+		
 		// Debug only
-		System.out.println(e.getPropertyName() + " Old Value: " + e.getOldValue() + " New Value: " + e.getNewValue());
+		if(onlyOnce == 2){
+		mUser = e.getPropertyName();
+		nNewUser =  (String) e.getNewValue();
+		ssg.setVisible(true);
+		}
+		System.out.println(e.getPropertyName());
+		if(e.getPropertyName() == "studentToReturn" ){
+			createTabs();
+		
+		}
+		onlyOnce++;
 
-		if (e.getPropertyName().equals("user")) {
-			String user = (String) e.getNewValue();
-			if (user.equals("Staff")) {
+	}
+	
+	public void createTabs(){
+		
+		if (mUser.equalsIgnoreCase("user")){
+			if (nNewUser.equalsIgnoreCase("Staff")) {
 				createStaffComponents();
-			} else if (user.equals("Faculty")) {
+			} else if (nNewUser.equalsIgnoreCase("Faculty")) {
 				createFacultyComponents();
 			} else {
 				// Must be student if not Staff or Faculty
 				createStudentComponents();
 			}
 		}
-
 	}
+
+
+	
+	
+	
 }

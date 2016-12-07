@@ -31,20 +31,16 @@ import student.StudentCollection;
  * @author Andrew,Brandon,Brian
  *
  */
-public class StudentGUI extends JPanel implements Observer, ActionListener, TableModelListener {
+public class ReportsGUI extends JPanel implements Observer, ActionListener, TableModelListener {
 
 	
 	private static final long serialVersionUID = -8675309L;
 	
 	private ArrayList<Student> myStudentList;
-	private Student studentToReturn;
 	//private Student myStudent;
 	
-	private JButton myListButton;
-	private JButton mySearchButton;
-	private JButton myAddButton;
-	private JPanel buttonPanel;
-	private JPanel dataPanel;
+	private JButton myListButton, mySearchButton, myAddButton;
+	private JPanel buttonPanel, dataPanel;
 	private String[] studentColumnNames = { "studentID", "firstName", "lastName"};
 
 	private Object[][] myData;
@@ -64,7 +60,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	 * Use this for Item administration. Add components that contain the list,
 	 * search and add to this.
 	 */
-	public StudentGUI () {
+	public ReportsGUI() {
 		//myStudent = theStudent;
 		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
 		
@@ -84,7 +80,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 			myData = new Object[myStudentList.size()][studentColumnNames.length];
 			for(int i = 0; i< myStudentList.size(); i++) {
 				Student tempStudent = myStudentList.get(i);
-				myData[i][0] = tempStudent.getID();
+				myData[i][0] = tempStudent.getStudentID();
 				//TODO Maybe pars gpa as string
 				myData[i][1] = tempStudent.getFirstName();
 				myData[i][2] = tempStudent.getLastName();
@@ -104,7 +100,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		
 		// A button panel at the top for list, search, add
 		buttonPanel = new JPanel();
-		myListButton = new JButton("Student List");
+		myListButton = new JButton("Student Graduated Year Vs E");
 		myListButton.addActionListener(this);
 
 		mySearchButton = new JButton("Student Search");
@@ -113,6 +109,9 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		myAddButton = new JButton("Add Student");
 		myAddButton.addActionListener(this);
 
+		myAddButton = new JButton("Add Student");
+		myAddButton.addActionListener(this);
+		
 		buttonPanel.add(myListButton);
 		buttonPanel.add(mySearchButton);
 
@@ -236,14 +235,6 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 			studentTextFields[0].setFocusable(true);
 			return;
 		}
-		Student temmpStudent;
-		temmpStudent = new Student(firstNameTemp, lstNameTemp);
-		String message = "Student add failed";
-		if (StudentCollection.add(temmpStudent)) {
-			message = "Student added";
-		}
-		JOptionPane.showMessageDialog(null, message);
-		
 	}
 	
 	/**
@@ -258,14 +249,10 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		
 		TableModel tempModel = (TableModel) theEvent.getSource();
 		String columnName = tempModel.getColumnName(column);
-		String data = tempModel.getValueAt(row, column).toString();
-		
-		
+		Object data = tempModel.getValueAt(row, column);
 		
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
-			studentToReturn = myStudentList.get(row);
-			System.out.println(tempStudent.getID());
 			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
 				JOptionPane.showMessageDialog(null, "Update failed");
 			}
@@ -273,10 +260,6 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 
 	}
 	
-	public Student getCurrentStudent(){
-		
-		return studentToReturn;
-	}
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		// TODO Auto-generated method stub
