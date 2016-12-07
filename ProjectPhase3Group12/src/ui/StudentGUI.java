@@ -40,8 +40,11 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	private Student studentToReturn;
 	//private Student myStudent;
 	
-	private JButton myListButton, mySearchButton, myAddButton;
-	private JPanel buttonPanel, dataPanel;
+	private JButton myListButton;
+	private JButton mySearchButton;
+	private JButton myAddButton;
+	private JPanel buttonPanel;
+	private JPanel dataPanel;
 	private String[] studentColumnNames = { "studentID", "firstName", "lastName"};
 
 	private Object[][] myData;
@@ -255,7 +258,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		
 		TableModel tempModel = (TableModel) theEvent.getSource();
 		String columnName = tempModel.getColumnName(column);
-		Object data = tempModel.getValueAt(row, column);
+		String data = tempModel.getValueAt(row, column).toString();
 		
 		
 		
