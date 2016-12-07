@@ -249,11 +249,11 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		
 		TableModel tempModel = (TableModel) theEvent.getSource();
 		String columnName = tempModel.getColumnName(column);
-		Object data = tempModel.getValueAt(row, column);
+		String data = tempModel.getValueAt(row, column).toString();
 		
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
-			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
+			if (!StudentCollection.update(tempStudent, columnName, data)) {
 				JOptionPane.showMessageDialog(null, "Update failed");
 			}
 		}

@@ -9,4 +9,7 @@ package test;
  */
 public class EmployerTest {
 
+	public void setUp() {
+		
+	}
 }

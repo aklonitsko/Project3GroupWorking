@@ -19,7 +19,7 @@ import academic.TransferSchool;
 public class AcademicRecordTest {
 
 	private AcademicRecord testRecord;
-	private ArrayList<TransferSchool> testTransferSchools;
+	private ArrayList<TransferSchool> testTransferSchools = new ArrayList<TransferSchool>();
 	private String academicIDTest = "01234";
 	private String studentIDTest = "56789";
 	private String programTest = "CSS";
@@ -177,26 +177,21 @@ public class AcademicRecordTest {
 	
 	@Test
 	public void testGetTransferSchools() {
-		
+		ArrayList<TransferSchool> tempSchools = new ArrayList<TransferSchool>();
+		tempSchools = testRecord.getTransferSchools();
+		assertEquals(tempSchools, testRecord.getTransferSchools());
 	}
 	
 	@Test
 	public void testSetTransferSchools() {
-		
+		testRecord.setTransferSchools(new ArrayList<TransferSchool>());
+		assertEquals(testRecord.getTransferSchools(), null);
 	}
 	
 	@Test
 	public void testAddTransferSchool() {
-		
+		testRecord.addTransferSchool(new TransferSchool(academicIDTest, academicIDTest, academicIDTest, GPATest, academicIDTest));
+		//testTransferSchools.addTransferSchool(new TransferSchool(academicIDTest, academicIDTest, academicIDTest, GPATest, academicIDTest));
+		assertEquals(testRecord.getTransferSchools().get(testRecord.getTransferSchools().size()), testTransferSchools.get(testTransferSchools.size()));
 	}
-	
-//	@Test
-//	public void testGetProgram() {
-//		
-//	}
-//	
-//	@Test
-//	public void testGetProgram() {
-//		
-//	}
 }
