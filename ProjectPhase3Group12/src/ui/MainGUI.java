@@ -104,7 +104,7 @@ public class MainGUI extends JFrame implements PropertyChangeListener {
 			System.out.println("after panel add");
 		} 
 		else if(type.equalsIgnoreCase("Student")) {
-			panel.add(new StudentGUI(mStudent));
+			panel.add(new StudentGUI());
 		} 
 		else if(type.equalsIgnoreCase("Academic")) {
 			panel.add(new AcademicGUI(mStudent));

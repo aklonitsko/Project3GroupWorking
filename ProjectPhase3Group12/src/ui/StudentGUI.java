@@ -39,8 +39,11 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	private ArrayList<Student> myStudentList;
 	private Student myStudent;
 	
-	private JButton myListButton, mySearchButton, myAddButton;
-	private JPanel buttonPanel, dataPanel;
+	private JButton myListButton;
+	private JButton mySearchButton;
+	private JButton myAddButton;
+	private JPanel buttonPanel;
+	private JPanel dataPanel;
 	private String[] studentColumnNames = { "studentID", "firstName", "lastName"};
 
 	private Object[][] myData;
@@ -60,8 +63,8 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	 * Use this for Item administration. Add components that contain the list,
 	 * search and add to this.
 	 */
-	public StudentGUI (Student theStudent) {
-		myStudent = theStudent;
+	public StudentGUI () {
+		//myStudent = theStudent;
 		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
 		
 		setLayout(new BorderLayout());
@@ -99,13 +102,13 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		
 		// A button panel at the top for list, search, add
 		buttonPanel = new JPanel();
-		myListButton = new JButton("Client List");
+		myListButton = new JButton("Student List");
 		myListButton.addActionListener(this);
 
-		mySearchButton = new JButton("Client Search");
+		mySearchButton = new JButton("Student Search");
 		mySearchButton.addActionListener(this);
 
-		myAddButton = new JButton("Add Client");
+		myAddButton = new JButton("Add Student");
 		myAddButton.addActionListener(this);
 
 		buttonPanel.add(myListButton);
