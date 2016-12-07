@@ -198,7 +198,7 @@ implements ActionListener,TableModelListener {
 			txfLabel[7] = new JLabel("   Day(dd):");
 			txfField[7] = new JTextField(2);
 			txfLabel[8] = new JLabel("   Year(yyyy):");
-			txfField[8] = new JTextField(2);
+			txfField[8] = new JTextField(4);
 			
 			datePanel.add(txfLabel[i]);
 			datePanel.add(txfLabel[6]);
@@ -311,7 +311,16 @@ implements ActionListener,TableModelListener {
 			mTxfSkill.setFocusable(true);
 			return;
 		}
-		emptoaddSkills.addSkill(mEmpName);
+		String message = "Employer add failed";
+		try{
+			emptoaddSkills.addSkill(mEmpName);
+			message = "Employer added";
+		}catch(Exception a){
+			
+		}
+		
+		JOptionPane.showMessageDialog(null, message);
+		
 		
 	}
 
@@ -352,7 +361,7 @@ implements ActionListener,TableModelListener {
 			return;
 		}
 		String mYear =txfField[8].getText();
-		if (mMonth.length() != 4) {
+		if (mYear.length() != 4) {
 			JOptionPane.showMessageDialog(null, "Enter Month As yyyy");
 			txfField[8].setFocusable(true);
 			return;
@@ -376,7 +385,7 @@ implements ActionListener,TableModelListener {
 		
 		String message = "Employer add failed";
 		if (mStudent.addEmployer(mEmp)) {
-			message = "Item added";
+			message = "Employer added";
 		}
 		JOptionPane.showMessageDialog(null, message);
 
