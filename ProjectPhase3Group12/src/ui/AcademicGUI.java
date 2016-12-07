@@ -460,7 +460,8 @@ private JPanel createAcaPnl() {
 		}
 		
 		AcademicRecord mAC;
-		mAC = new AcademicRecord(mStudent.getID(), mprogram, mDegreeLvl, 
+		String id = mStudent.getID();
+		mAC = new AcademicRecord(id, mprogram, mDegreeLvl, 
 				mGradTerm, mGradYear, muwEmail, mexEmail, mGPADO, new ArrayList<TransferSchool>());
 		
 		
