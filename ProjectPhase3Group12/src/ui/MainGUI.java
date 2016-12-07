@@ -125,7 +125,7 @@ public class MainGUI extends JFrame implements PropertyChangeListener {
 			panel.add(new AcademicGUI(mRealStudent));
 		}
 		else {
-			panel.add(new JLabel("Needs to be implemented!"));
+			panel.add(new JLabel("This Is Voice-Activated! Tell Me What To Do."));
 		}
 		
 		
