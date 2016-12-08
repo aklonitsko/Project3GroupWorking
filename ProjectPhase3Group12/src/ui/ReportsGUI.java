@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 import employment.Employer;
 import employment.EmployerCollection;
@@ -108,13 +110,14 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 	 * This allows the university to evaluate how students are doing. These can be filtered by Program and degree level.
 	 */
 	private void runAcademicReport() {
-		String academicData2DArray[][];
-		int totalStudents = 0;
-		int tier1 = 0;
-		int tier2 = 0;
-		int tier3 = 0;
-		int tier4 = 0; 
-		int tier5 = 0;
+		double academicDataArray[] = {};
+		String[] tierNames = {"Tier 1 - 4.0 ", "Tier 2 - 3.0 to 3.99 ", "Tier 3 - 2.0 to 2.99 ", "Tier 4 - 1.0 to 1.99 ", "Tier 5 less than 1.0 "};
+		double totalStudents = 0;
+		double tier1 = 0;
+		double tier2 = 0;
+		double tier3 = 0;
+		double tier4 = 0; 
+		double tier5 = 0;
 		
 		if(ReportFilterOptionsGUI.transferFilter == true) {
 			if(ReportFilterOptionsGUI.programFilter == true) {
@@ -142,7 +145,23 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 					}
 					if(s.getAcademicRecord().getGPA() < 1.0 && s.getAcademicRecord().getGPA() >= 0.0) {
 						tier5++;
-					}					
+					}
+					
+					totalStudents++;
+				}
+				
+				academicDataArray[0] = (tier1 / totalStudents);
+				academicDataArray[1] = (tier2 / totalStudents);
+				academicDataArray[2] = (tier3 / totalStudents);
+				academicDataArray[3] = (tier4 / totalStudents);
+				academicDataArray[4] = (tier5 / totalStudents);
+				
+				StyledDocument doc = reportDataWindow.getStyledDocument();
+				try {
+					doc.insertString(doc.getLength(), Double.toString(academicDataArray[0]), null);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			} else {
 				for(Student s : myStudentList) {
