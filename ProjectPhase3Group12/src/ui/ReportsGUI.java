@@ -126,7 +126,7 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 						tempList.add(s);
 					}
 				}
-				//Stuff
+				
 				for(Student s : tempList) {
 					if(s.getAcademicRecord().getGPA() == 4.0) {
 						tier1++;
