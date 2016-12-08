@@ -7,11 +7,14 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,248 +24,264 @@ import javax.swing.JTextField;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
 
 import employment.Employer;
 import employment.EmployerCollection;
 import student.Student;
 import student.StudentCollection;
+import java.awt.FlowLayout;
+import javax.swing.JTextPane;
+import java.awt.Font;
+import javax.swing.border.EtchedBorder;
+import java.awt.Color;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.UIManager;
 
 /**
- * @author Andrew,Brandon,Brian
+ * @author Brandon
  *
  */
-public class ReportsGUI extends JPanel implements Observer, ActionListener, TableModelListener {
-
+public class ReportsGUI extends JPanel implements ActionListener, PropertyChangeListener {
 	
-	private static final long serialVersionUID = -8675309L;
+	private static final long serialVersionUID = 2174454681815171064L;
+	private ArrayList<Student> myStudentList = new ArrayList<Student>();
+	ReportFilterOptionsGUI filterOptionGUI;
 	
-	private ArrayList<Student> myStudentList;
-	//private Student myStudent;
+	JPanel reportButtonPanel = new JPanel();
+	JTextPane reportDataWindow = new JTextPane();
+	JScrollPane scrollPane = new JScrollPane();
+	JButton reportOneButton = new JButton("Report #1");
+	JButton reportTwoButton = new JButton("Report #2");
+	JButton reportThreeButton = new JButton("Report #3");
+	private final JButton saveReportButton = new JButton("Save Report");
 	
-	private JButton myListButton, mySearchButton, myAddButton;
-	private JPanel buttonPanel, dataPanel;
-	private String[] studentColumnNames = { "studentID", "firstName", "lastName"};
-
-	private Object[][] myData;
-	private JTable myTable;
-	private JScrollPane myScrollPane;
-	private JPanel searchPanel;
-	private JLabel titleLabel;
-	private JTextField employerTextField;
-	private JButton employerSearchButton;
-
-	private JPanel addStudentPanel;
-	private JLabel[] studentTextLabels = new JLabel[3];
-	private JTextField[] studentTextFields = new JTextField[3];
-	private JButton addStudentsButton;
-
-	/**
-	 * Use this for Item administration. Add components that contain the list,
-	 * search and add to this.
-	 */
 	public ReportsGUI() {
-		//myStudent = theStudent;
-		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
+		setBorder(new BevelBorder(BevelBorder.LOWERED, new Color(0, 0, 255), new Color(192, 192, 192), new Color(0, 0, 255), new Color(192, 192, 192)));
+
 		
-		setLayout(new BorderLayout());
-		myStudentList = getStudentData();
+		setLayout(new BorderLayout(0, 0));
+		
 		setUpComponents();
-		setVisible(true);
-		setSize(500, 500);
+		getReportData();
 	}
 
-	private ArrayList<Student> getStudentData() {
-		try{
-			myStudentList = StudentCollection.getStudents();
-		}catch(Exception e){	
-		}
-		if(myStudentList != null){
-			myData = new Object[myStudentList.size()][studentColumnNames.length];
-			for(int i = 0; i< myStudentList.size(); i++) {
-				Student tempStudent = myStudentList.get(i);
-				myData[i][0] = tempStudent.getStudentID();
-				//TODO Maybe pars gpa as string
-				myData[i][1] = tempStudent.getFirstName();
-				myData[i][2] = tempStudent.getLastName();
-			}
-			
-			
-		}
-			
-		
-		return myStudentList;
-	}
-	/**
-	 * Create the three panels to add to this GUI. One for list, one for search,
-	 * one for add.
-	 */
 	private void setUpComponents() {
 		
-		// A button panel at the top for list, search, add
-		buttonPanel = new JPanel();
-		myListButton = new JButton("Student Graduated Year Vs E");
-		myListButton.addActionListener(this);
-
-		mySearchButton = new JButton("Student Search");
-		mySearchButton.addActionListener(this);
-
-		myAddButton = new JButton("Add Student");
-		myAddButton.addActionListener(this);
-
-		myAddButton = new JButton("Add Student");
-		myAddButton.addActionListener(this);
+		reportButtonPanel.setBackground(new Color(245, 245, 220));
+		reportButtonPanel.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		
-		buttonPanel.add(myListButton);
-		buttonPanel.add(mySearchButton);
-
-		buttonPanel.add(myAddButton);
-		add(buttonPanel, BorderLayout.NORTH);
-
-		// List Panel
-		dataPanel = new JPanel();
-		myTable = new JTable(myData, studentColumnNames);
-		myScrollPane = new JScrollPane(myTable);
-		dataPanel.add(myScrollPane);
-		myTable.getModel().addTableModelListener(this);
-
-		// Search Panel
-		searchPanel = new JPanel();
-		titleLabel = new JLabel("Enter Name: ");
-		employerTextField = new JTextField(25);
-		employerSearchButton = new JButton("Search");
-		employerSearchButton.addActionListener(this);
-		searchPanel.add(titleLabel);
-		searchPanel.add(employerTextField);
-		searchPanel.add(employerSearchButton);
-
-		// Add Panel
-		addStudentPanel = new JPanel();
-		addStudentPanel.setLayout(new GridLayout(8, 0));
+		add(reportButtonPanel, BorderLayout.NORTH);
+		reportButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		String labelNames[] = {"StudentId", "First Name", "Last Name"};
+		reportOneButton.addActionListener(this);
+		reportButtonPanel.add(reportOneButton);
 		
-		for (int i = 0; i < labelNames.length; i++) {
-			JPanel panel = new JPanel();
-			panel.setLayout(new GridLayout(1, 0));
-			studentTextLabels[i] = new JLabel(labelNames[i]);
-			studentTextFields[i] = new JTextField(25);
-			panel.add(studentTextLabels[i]);
-			panel.add(studentTextFields[i]);
-			addStudentPanel.add(panel);
-		}
-
-		JPanel panel = new JPanel();
+		reportTwoButton.addActionListener(this);
+		reportButtonPanel.add(reportTwoButton);
 		
-		addStudentsButton = new JButton("Add");
-		addStudentsButton.addActionListener(this);
+		reportThreeButton.addActionListener(this);
+		reportButtonPanel.add(reportThreeButton);
 		
-		panel.add(addStudentsButton);
+		add(scrollPane, BorderLayout.CENTER);
+		reportDataWindow.setBackground(UIManager.getColor("InternalFrame.inactiveTitleGradient"));
 		
-		addStudentPanel.add(panel);
-		add(dataPanel, BorderLayout.CENTER);
-
+		reportDataWindow.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		reportDataWindow.setEditable(false);
+		reportDataWindow.setText("Report data will appear here");
+		scrollPane.setViewportView(reportDataWindow);
+		
+		saveReportButton.addActionListener(this);
+		add(saveReportButton, BorderLayout.SOUTH);
 	}
-
+	
+	
+	private void getReportData() {
+		
+		myStudentList = StudentCollection.getStudents();
+	}
+	
 	/**
-	 * Make the buttons work!
+	 * Runs a report that looks at all students and their GPA. Splits them into 5 categories,
+	 * 4.0, 3.0-3.9, 2.0-2.9, 1.0-1.9, and <1.0 and gives a percentage of students in those brackets. Additionally,
+	 * a transfer student breakdown is available for this report, which displays only transfer students.
+	 * This allows the university to evaluate how students are doing. These can be filtered by Program and degree level.
 	 */
+	private void runAcademicReport() {
+		double academicDataArray[] = {};
+		String[] tierNames = {"Tier 1 - 4.0 ", "Tier 2 - 3.0 to 3.99 ", "Tier 3 - 2.0 to 2.99 ", "Tier 4 - 1.0 to 1.99 ", "Tier 5 less than 1.0 "};
+		double totalStudents = 0;
+		double tier1 = 0;
+		double tier2 = 0;
+		double tier3 = 0;
+		double tier4 = 0; 
+		double tier5 = 0;
+		
+		if(ReportFilterOptionsGUI.transferFilter == true) {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				
+				ArrayList<Student> tempList = myStudentList;
+				
+				for(Student s : tempList) {
+					if(s.getAcademicRecord().isTransfer() == true) {
+						tempList.add(s);
+					}
+				}
+				
+				for(Student s : tempList) {
+					if(s.getAcademicRecord().getGPA() == 4.0) {
+						tier1++;
+					}
+					if(s.getAcademicRecord().getGPA() < 4.0 && s.getAcademicRecord().getGPA() >= 3.0) {
+						tier2++;
+					}
+					if(s.getAcademicRecord().getGPA() < 3.0 && s.getAcademicRecord().getGPA() >= 2.0) {
+						tier3++;
+					}
+					if(s.getAcademicRecord().getGPA() < 2.0 && s.getAcademicRecord().getGPA() >= 1.0) {
+						tier4++;
+					}
+					if(s.getAcademicRecord().getGPA() < 1.0 && s.getAcademicRecord().getGPA() >= 0.0) {
+						tier5++;
+					}
+					
+					totalStudents++;
+				}
+				
+				academicDataArray[0] = (tier1 / totalStudents);
+				academicDataArray[1] = (tier2 / totalStudents);
+				academicDataArray[2] = (tier3 / totalStudents);
+				academicDataArray[3] = (tier4 / totalStudents);
+				academicDataArray[4] = (tier5 / totalStudents);
+				
+				StyledDocument doc = reportDataWindow.getStyledDocument();
+				try {
+					doc.insertString(doc.getLength(), Double.toString(academicDataArray[0]), null);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		} else {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				for(Student s : myStudentList) {
+					
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Runs a report on how many GRADUATES currently have jobs versus those who do not and places a percentage of 
+	 * students to represent that, as well as a percentage breakdown of the companies students are working for
+	 * This can be filtered by program, and degree level.
+	 */
+	private void runEmploymentReport() {
+		if(ReportFilterOptionsGUI.transferFilter == true) {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				for(Student s : myStudentList) {
+					
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		} else {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				for(Student s : myStudentList) {
+					
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Runs a report on how many students who have/or had internships currently have jobs
+	 * and a percentage breakdown of companies students are working for. This can be filterd by program and degree level.
+	 */
+	private void runInternReport() {
+		if(ReportFilterOptionsGUI.transferFilter == true) {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				for(Student s : myStudentList) {
+					
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		} else {
+			if(ReportFilterOptionsGUI.programFilter == true) {
+				for(Student s : myStudentList) {
+					
+				}
+			} else {
+				for(Student s : myStudentList) {
+					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Saves the report to a file on the local system.
+	 */
+	private void saveReport() {
+		
+	}
+	
+	private void runFilterGUI(String reportType) {
+		filterOptionGUI = new ReportFilterOptionsGUI(reportType);
+		filterOptionGUI.addPropertyChangeListener(this);
+		
+	}
+	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == myListButton) {
+	public void actionPerformed(ActionEvent theEvent) {
+		
+		if(theEvent.getSource() == reportOneButton) {
 			
-			dataPanel.removeAll();
-			myTable = new JTable(myData, studentColumnNames);
-			myTable.getModel().addTableModelListener(this);
-			myScrollPane = new JScrollPane(myTable);
-			dataPanel.add(myScrollPane);
-			dataPanel.revalidate();
-			this.repaint();
-
-		} else if (e.getSource() == mySearchButton) {
-			dataPanel.removeAll();
-			dataPanel.add(searchPanel);
-			dataPanel.revalidate();
-			this.repaint();
-		} else if (e.getSource() == myAddButton) {
-			dataPanel.removeAll();
-			dataPanel.add(addStudentPanel);
-			dataPanel.revalidate();
-			this.repaint();
-
-		} else if (e.getSource() == employerSearchButton) {
-			String title = employerTextField.getText();
-			if (title.length() > 0) {
-				//myEmployers = EmployerCollection.getEmployers();
-				dataPanel.removeAll();
-				myTable = new JTable(myData, studentColumnNames);
-				myTable.getModel().addTableModelListener(this);
-				myScrollPane = new JScrollPane(myTable);
-				dataPanel.add(myScrollPane);
-				dataPanel.revalidate();
-				this.repaint();
-				employerTextField.setText("");
-			}
-		} else if (e.getSource() == addStudentsButton) {
-			performAddItem();
-		}
-
+			runFilterGUI("Academic");
+			
+		} else if(theEvent.getSource() == reportTwoButton) {
+			runFilterGUI("Employment");
+			
+		} else if(theEvent.getSource() == reportThreeButton) { 
+			runFilterGUI("Intern");
+			
+		} else if(theEvent.getSource() == saveReportButton) {
+			saveReport();
+			
+		}	else { //If for some reason the event is not one of my buttons, an error appears.
+			JOptionPane.showMessageDialog(null, "Report Failed");
+			
+		}	
 	}
 
-	/**
-	 * Allows to add an Item. Only name and address is required.
-	 */
-	private void performAddItem() {
-
-		String studentIDTemp = studentTextFields[0].getText();
-		
-		if (studentIDTemp.length() == 0) {
-			JOptionPane.showMessageDialog(null, "Enter students ID");
-			studentTextFields[0].setFocusable(true);
-			return;
-		}
-		
-		String firstNameTemp = studentTextFields[1].getText();
-		
-		if (firstNameTemp.length() == 0) {
-			JOptionPane.showMessageDialog(null, "Enter students first name");
-			studentTextFields[0].setFocusable(true);
-			return;
-		}
-		
-		String lstNameTemp = studentTextFields[2].getText();
-		if (lstNameTemp.length() == 0) {
-			JOptionPane.showMessageDialog(null, "Enter students last name");
-			studentTextFields[0].setFocusable(true);
-			return;
-		}
-	}
-	
-	/**
-	 * Listen to the cell changes on the table. 
-	 */
 	@Override
-	public void tableChanged(TableModelEvent theEvent) {
-		// add something here that can get the student box clicked and pass it to the main GUI for the other gui
-		//classes to use
-		int row = theEvent.getFirstRow();
-		int column = theEvent.getColumn();
-		
-		TableModel tempModel = (TableModel) theEvent.getSource();
-		String columnName = tempModel.getColumnName(column);
-		Object data = tempModel.getValueAt(row, column);
-		
-		if (data != null && ((String) data).length() != 0) {
-			Student tempStudent = myStudentList.get(row);
-			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
-				JOptionPane.showMessageDialog(null, "Update failed");
-			}
+	public void propertyChange(PropertyChangeEvent propertyEvent) {
+		if (ReportFilterOptionsGUI.reportType == "Academic") {
+			runAcademicReport();
+		} else if(ReportFilterOptionsGUI.reportType == "Employment") {
+			
+		} else if(ReportFilterOptionsGUI.reportType == "Intern") {
+			
 		}
-
-	}
-	
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
 		
 	}
 }
