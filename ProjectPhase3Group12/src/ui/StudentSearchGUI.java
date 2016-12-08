@@ -1,5 +1,9 @@
 /**
- * 
+ * change on gui
+ * fix glitch
+ * open to search first
+ * have a add student
+ * go to table to allow user to select student
  */
 package ui;
 
@@ -50,7 +54,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	private JScrollPane myScrollPane;
 	private JPanel searchPanel;
 	private JLabel titleLabel;
-	private JTextField employerTextField;
+	private JTextField studentNameTextField;
 	private JButton employerSearchButton;
 
 	private JPanel addStudentPanel;
@@ -67,16 +71,18 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
 		
 		setLayout(new BorderLayout());
-		myStudentList = getStudentData();
+		myStudentList = getStudentData(null,null);
 		setUpComponents();
 		setVisible(true);
 		setSize(500, 500);
 	}
 
-	private ArrayList<Student> getStudentData() {
-		try{
+	private ArrayList<Student> getStudentData(String searchKeyF,String searchKeyL) {
+		if(searchKeyF != null && searchKeyL != null)
+		{
+			myStudentList = StudentCollection.searchByName(searchKeyF, searchKeyL);
+		}else{
 			myStudentList = StudentCollection.getStudents();
-		}catch(Exception e){	
 		}
 		if(myStudentList != null){
 			myData = new Object[myStudentList.size()][studentColumnNames.length];
@@ -127,11 +133,11 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		// Search Panel
 		searchPanel = new JPanel();
 		titleLabel = new JLabel("Enter Name: ");
-		employerTextField = new JTextField(25);
+		studentNameTextField = new JTextField(25);
 		employerSearchButton = new JButton("Search");
 		employerSearchButton.addActionListener(this);
 		searchPanel.add(titleLabel);
-		searchPanel.add(employerTextField);
+		searchPanel.add(studentNameTextField);
 		searchPanel.add(employerSearchButton);
 
 		// Add Panel
@@ -189,9 +195,15 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 			this.repaint();
 
 		} else if (e.getSource() == employerSearchButton) {
-			String title = employerTextField.getText();
-			if (title.length() > 0) {
-				//myEmployers = EmployerCollection.getEmployers();
+			String title = studentNameTextField.getText();
+			String[] st = title.split(" ");
+			String FirstName = st[0];
+			String LastName = st[1];
+			System.out.println();
+			if (title.length() > 0 && st.length==2) {
+				st = title.split(title);
+				myStudentList = getStudentData("andrew","klonitsko");
+				
 				dataPanel.removeAll();
 				myTable = new JTable(myData, studentColumnNames);
 				myTable.getModel().addTableModelListener(this);
@@ -199,7 +211,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 				dataPanel.add(myScrollPane);
 				dataPanel.revalidate();
 				this.repaint();
-				employerTextField.setText("");
+				studentNameTextField.setText("");
 			}
 		} else if (e.getSource() == addStudentsButton) {
 			performAddItem();
@@ -264,7 +276,9 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
 			studentToReturn = myStudentList.get(row);
+		
 			firePropertyChange("studentToReturn", null, studentToReturn);
+			
 			setVisible(false);
 			System.out.println(tempStudent.getID());
 			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
