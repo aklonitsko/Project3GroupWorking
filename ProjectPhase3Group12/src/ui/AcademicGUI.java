@@ -64,6 +64,8 @@ implements ActionListener,TableModelListener, Observer {
 	private JLabel[] txfLabel = new JLabel[10];
 	private JTextField[] txfField = new JTextField[10];
 	private JButton mBtnAddAcad;
+	private JPanel mPnlBorderLayout1;
+	
 	
 	
 	//variables for transfer table
@@ -114,7 +116,7 @@ implements ActionListener,TableModelListener, Observer {
 				mData[i][0] = mTransferList.get(i).getName();
 				//TODO Maybe pars gpa as string
 				mData[i][1] = Double.toString(mTransferList.get(i).getGPA());
-				mData[i][2] = mTransferList.get(i).getName();
+				mData[i][2] = mTransferList.get(i).getDegreeEarned();
 			}
 			
 			
@@ -135,13 +137,13 @@ implements ActionListener,TableModelListener, Observer {
 		// The Top Most Panel That Allows Adding Employer and Listing Employer
 				mPnlButtons = new JPanel();
 
-				mBtnAcademicList = new JButton("Academic List");
+				mBtnAcademicList = new JButton("Academic Record");
 				mBtnAcademicList.addActionListener(this);
 
 				mBtnAddEditAcademic = new JButton("Add/Edit Academic");
 				mBtnAddEditAcademic.addActionListener(this);
 				
-				mBtnAddTrans = new JButton("Add Transfer School");
+				mBtnAddTrans = new JButton("Add/View Transfer School");
 				mBtnAddTrans.addActionListener(this);
 
 				mPnlButtons.add(mBtnAcademicList);
@@ -158,17 +160,12 @@ implements ActionListener,TableModelListener, Observer {
 				
 				mTable = new JTable(mData,mTransferStrings);
 				mScrollPane = new JScrollPane(mTable);
-				
-				
-				mPnlList.add(mStudentCurrentAcademicPnl);
-				mPnlList.add(mScrollPane);
-				
 				mTable.getModel().addTableModelListener(this);
 				
-
+				mPnlList.add(mStudentCurrentAcademicPnl);
 				//Add Panel- allows User to add/edit academic and tra
 				mPnlAdd = new JPanel(new GridLayout(7,1));
-				
+				mPnlBorderLayout1 = new JPanel(new BorderLayout());
 				
 				//mPnlAcademic = createEditAcaPnl();
 				
@@ -193,6 +190,7 @@ implements ActionListener,TableModelListener, Observer {
 					panel.add(txfFieldtrans[i]);
 					mPnlAddtrans.add(panel);
 				}
+				//mPnlAddtrans.add(mScrollPane);
 				
 				mBtnAddtransfer = new JButton("Add Transfer Information");
 				mBtnAddtransfer.addActionListener(this);
@@ -250,7 +248,8 @@ implements ActionListener,TableModelListener, Observer {
 	 * @return JPanel    
 	 */
 private JPanel createAcaPnl() {
-	mStudentCurrentAcademicPnl = new JPanel(new GridLayout(7,2));
+	mStudentCurrentAcademicPnl = new JPanel(new GridLayout(9,2));
+	
 	mAcaRecord[0] = new JLabel("Program: ");
 	if(mStudent.getAcademicRecord().getProgram() != null){
 		mAcaRecord[1] = new JLabel(mStudent.getAcademicRecord().getProgram());
@@ -293,6 +292,12 @@ private JPanel createAcaPnl() {
 	}else{
 		mAcaRecord[13] = new JLabel("0");
 	}
+	JLabel thecurrentstudentlbl = new JLabel("The Current Student: ");
+	JLabel thecurrentstudentname = new JLabel(mStudent.getLastName() +", " +mStudent.getFirstName());
+	mStudentCurrentAcademicPnl.add(thecurrentstudentlbl);
+	mStudentCurrentAcademicPnl.add(thecurrentstudentname);
+	mStudentCurrentAcademicPnl.add(new JLabel());
+	mStudentCurrentAcademicPnl.add(new JLabel());
 	for(int j =0;j < mAcaRecord.length; j++){
 		mStudentCurrentAcademicPnl.add(mAcaRecord[j]);
 	}
@@ -319,30 +324,41 @@ private JPanel createAcaPnl() {
 			
 			mPnlList.removeAll();
 			mStudentCurrentAcademicPnl = createAcaPnl();
-			
-			mTable = new JTable(mData,mTransferStrings);
-			mTable.getModel().addTableModelListener(this);
-			mScrollPane = new JScrollPane(mTable);
 			mPnlList.add(mStudentCurrentAcademicPnl);
-			mPnlList.add(mScrollPane);
+			
 			mPnlList.revalidate();
 			this.repaint();
 			
 		} else if(e.getSource() == mBtnAddEditAcademic){
 			mPnlList.removeAll();
-			mPnlAdd = new JPanel();
+			mPnlAdd = new JPanel(new BorderLayout());
+		
 			mPnlAcademic = createEditAcaPnl();
-			mBtnAddAcad = new JButton("Add/Edit Academic Info:");
+			mBtnAddAcad = new JButton("Add/Edit Academic Info");
 			mBtnAddAcad.addActionListener(this);
-			mPnlAdd.add(mPnlAcademic);
-			mPnlAdd.add(mBtnAddAcad);
+			
+			mPnlAdd.add(mPnlAcademic,BorderLayout.NORTH);
+			mPnlAdd.add(new JLabel(),BorderLayout.CENTER);
+			mPnlAdd.add(mBtnAddAcad,BorderLayout.SOUTH);
+			
 			mPnlList.add(mPnlAdd);
 			mPnlList.revalidate();
 			this.repaint();
 			
 		}else if(e.getSource() == mBtnAddTrans){
+			JPanel jp = new JPanel(new BorderLayout());
+			JPanel tp = new JPanel(new BorderLayout());
 			mPnlList.removeAll();
-			mPnlList.add(mPnlAddtrans);
+			JLabel trarecordtabel = new JLabel("Transfer record(s) for current student");
+			mTable = new JTable(mData,mTransferStrings);
+			mTable.getModel().addTableModelListener(this);
+			mScrollPane = new JScrollPane(mTable);
+			
+			jp.add(mScrollPane,BorderLayout.NORTH);
+			jp.add(mPnlAddtrans, BorderLayout.CENTER);
+			tp.add(trarecordtabel, BorderLayout.NORTH);
+			tp.add(jp,BorderLayout.CENTER);
+			mPnlList.add(tp);
 			mPnlList.revalidate();
 			this.repaint();
 			
