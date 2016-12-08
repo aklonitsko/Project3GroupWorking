@@ -1,5 +1,7 @@
-/**
- * 
+/**put skills in the add skills panel
+ * fix update issue with employment
+ * don't have student select panel open for staff
+ * grab 
  */
 package ui;
 

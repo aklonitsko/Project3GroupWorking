@@ -156,11 +156,8 @@ implements ActionListener,TableModelListener, Observer {
 				mStudentCurrentAcademicPnl=createAcaPnl();
 				
 				
-				
-				
 				mTable = new JTable(mData,mTransferStrings);
 				mScrollPane = new JScrollPane(mTable);
-				
 				
 				
 				mPnlList.add(mStudentCurrentAcademicPnl);
@@ -254,7 +251,6 @@ implements ActionListener,TableModelListener, Observer {
 	 */
 private JPanel createAcaPnl() {
 	mStudentCurrentAcademicPnl = new JPanel(new GridLayout(7,2));
-	
 	mAcaRecord[0] = new JLabel("Program: ");
 	if(mStudent.getAcademicRecord().getProgram() != null){
 		mAcaRecord[1] = new JLabel(mStudent.getAcademicRecord().getProgram());
@@ -452,7 +448,9 @@ private JPanel createAcaPnl() {
 			txfField[4].setFocusable(true);
 			return;
 		}
+		
 		String mexEmail = txfField[5].getText();
+		System.out.println("dfews"+ mexEmail);
 		if (mexEmail.length() == 0) {
 			JOptionPane.showMessageDialog(null, "Enter A External Email:");
 			txfField[5].setFocusable(true);
@@ -466,8 +464,23 @@ private JPanel createAcaPnl() {
 		
 		
 		String message = "Academic Record add failed";
+		if(mStudent.getAcademicRecord().getProgram() == null)
+		{
 		if (mStudent.addAcademicRecord(mAC)) {
 			message = "Academic Record Added";
+		}
+		}else{
+			
+			
+			AcademicCollection.update(mStudent.getAcademicRecord(), "program", mprogram);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "degreeLevel", mDegreeLvl);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "graduationTerm", mGradTerm);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "graduationYear", mGradYear);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "uwEmail", muwEmail);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "externalEmail", mexEmail);
+			AcademicCollection.update(mStudent.getAcademicRecord(), "GPA", mGPADO);
+			
+			message = "Academic Record Updated";
 		}
 		JOptionPane.showMessageDialog(null, message);
 

@@ -1,4 +1,8 @@
 /**
+()to do for this gui
+1) add academic info to the same panel as academic
+2) add transfer table to the same as adding buttons
+3) make sure every updates when add and changed
  * 
  */
 package student;
