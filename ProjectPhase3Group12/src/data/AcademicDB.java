@@ -50,7 +50,8 @@ public class AcademicDB {
 				//Handle GPA
 				preparedStatement.setDouble(1, (double)data);
 			}
-			preparedStatement.setInt(2, Integer.parseInt(record.getID())); // for academicID
+			//System.out.println("Print" + record.getgId());
+			preparedStatement.setInt(2, Integer.parseInt(record.getStudentID())); // for academicID
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(e);

@@ -58,7 +58,7 @@ public class AcademicRecord extends Observable {
 		this.setGraduationTerm(theGraduationTerm);
 		this.setGraduationYear(theGraduationYear);
 		this.setUWEmail(theUWEmail);
-		this.setExternalEmail(myExternalEmail);
+		this.setExternalEmail(theExternalEmail);
 		this.setGPA(theGPA);
 		
 		myTransferSchools = thePreviousSchools;
