@@ -39,6 +39,7 @@ import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.UIManager;
+import javax.swing.JTextArea;
 
 /**
  * @author Brandon
@@ -49,9 +50,11 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 	private static final long serialVersionUID = 2174454681815171064L;
 	private ArrayList<Student> myStudentList = new ArrayList<Student>();
 	ReportFilterOptionsGUI filterOptionGUI;
+	private static final String newLine = "\r\n";
+	private static final String spaceChar = " ";
 	
 	JPanel reportButtonPanel = new JPanel();
-	JTextPane reportDataWindow = new JTextPane();
+	JTextArea reportDataWindow = new JTextArea(3,5);
 	JScrollPane scrollPane = new JScrollPane();
 	JButton reportOneButton = new JButton("Report #1");
 	JButton reportTwoButton = new JButton("Report #2");
@@ -156,19 +159,24 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 				academicDataArray[3] = (tier4 / totalStudents);
 				academicDataArray[4] = (tier5 / totalStudents);
 				
-				StyledDocument doc = reportDataWindow.getStyledDocument();
-				try {
-					doc.insertString(doc.getLength(), Double.toString(academicDataArray[0]), null);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				reportDataWindow.setText(Double.toString(tier1) + spaceChar);
+				reportDataWindow.append(Double.toString(tier2) + spaceChar);
+				reportDataWindow.append(Double.toString(tier3) + spaceChar);
+				reportDataWindow.append(Double.toString(tier4) + spaceChar);
+				reportDataWindow.append(Double.toString(tier5) + spaceChar);
+				reportDataWindow.append(newLine + Double.toString(academicDataArray[0]));
+				reportDataWindow.append(newLine + Double.toString(academicDataArray[1]));
+				reportDataWindow.append(newLine + Double.toString(academicDataArray[2]));
+				reportDataWindow.append(newLine + Double.toString(academicDataArray[3]));
+				reportDataWindow.append(newLine + Double.toString(academicDataArray[4]));
+				
 				}
 			} else {
 				for(Student s : myStudentList) {
 					
 				}
-			}
-		} else {
+			} 
+		
 			if(ReportFilterOptionsGUI.programFilter == true) {
 				for(Student s : myStudentList) {
 					
@@ -179,7 +187,6 @@ public class ReportsGUI extends JPanel implements ActionListener, PropertyChange
 				}
 			}
 		}
-	}
 	
 	/**
 	 * Runs a report on how many GRADUATES currently have jobs versus those who do not and places a percentage of 
