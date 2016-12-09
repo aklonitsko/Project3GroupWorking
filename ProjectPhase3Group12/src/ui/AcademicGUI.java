@@ -61,8 +61,8 @@ implements ActionListener,TableModelListener, Observer {
 	//variables to add new academic record
 	private JPanel mPnlAdd;
 	private JPanel mPnlAcademic;
-	private JLabel[] txfLabel = new JLabel[10];
-	private JTextField[] txfField = new JTextField[10];
+	private JLabel[] txfLabel = new JLabel[7];
+	private JTextField[] txfField = new JTextField[7];
 	private JButton mBtnAddAcad;
 	private JPanel mPnlBorderLayout1;
 	
@@ -323,6 +323,7 @@ private JPanel createAcaPnl() {
 			mTransferList = getTransData(mStudent);
 			
 			mPnlList.removeAll();
+			
 			mStudentCurrentAcademicPnl = createAcaPnl();
 			mPnlList.add(mStudentCurrentAcademicPnl);
 			
@@ -405,7 +406,7 @@ private JPanel createAcaPnl() {
 		
 		//Adding To the collection
 		AcademicRecord mAC = mStudent.getAcademicRecord();
-		TransferSchool mTF = new TransferSchool("0",mAC.getID(),mprogram,mGPADO,mDegreeLvl);
+		TransferSchool mTF = new TransferSchool("0",mAC.getID(),mprogram,mGPADO,mDegreeLvl); //here is a change
 		mAC.addTransferSchool(mTF);
 		
 		String message = "Transfer School add failed";
@@ -420,6 +421,10 @@ private JPanel createAcaPnl() {
 
 	private void performAddAcad() {
 		
+		String message = "Academic Record Adding Failed";
+		
+		if(mStudent.getAcademicRecord().getProgram() == null)
+		{
 		String mprogram = txfField[0].getText();
 		if (mprogram.length() == 0) {
 			JOptionPane.showMessageDialog(null, "Enter a program name");
@@ -479,24 +484,32 @@ private JPanel createAcaPnl() {
 				mGradTerm, mGradYear, muwEmail, mexEmail, mGPADO, new ArrayList<TransferSchool>());
 		
 		
-		String message = "Academic Record add failed";
-		if(mStudent.getAcademicRecord().getProgram() == null)
-		{
+		
+		
 		if (mStudent.addAcademicRecord(mAC)) {
 			message = "Academic Record Added";
 		}
+		
 		}else{
 			
-			
-			AcademicCollection.update(mStudent.getAcademicRecord(), "program", mprogram);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "degreeLevel", mDegreeLvl);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "graduationTerm", mGradTerm);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "graduationYear", mGradYear);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "uwEmail", muwEmail);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "externalEmail", mexEmail);
-			AcademicCollection.update(mStudent.getAcademicRecord(), "GPA", mGPADO);
-			
+			int checkFields = 0;
+			for(int i = 0;i< txfField.length;i++){
+				if(txfField[i].getText().length() == 0)
+				{
+					message= "All Fields Must Have Values";
+					checkFields ++;
+				}
+			}
+			if(checkFields == 0){
+				AcademicCollection.update(mStudent.getAcademicRecord(), "program", txfField[0].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "degreeLevel", txfField[1].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "graduationTerm", txfField[2].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "graduationYear", txfField[3].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "uwEmail", txfField[4].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "externalEmail", txfField[5].getText());
+				AcademicCollection.update(mStudent.getAcademicRecord(), "GPA", txfField[6].getText());
 			message = "Academic Record Updated";
+			}
 		}
 		JOptionPane.showMessageDialog(null, message);
 
