@@ -27,6 +27,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import academic.AcademicRecord;
+import academic.TransferSchool;
 import employment.Employer;
 import employment.EmployerCollection;
 import student.Student;
@@ -53,6 +55,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	private JTable myTable;
 	private JScrollPane myScrollPane;
 	private JPanel searchPanel;
+	private JPanel howtoPanel;
 	private JLabel titleLabel;
 	private JTextField studentNameTextField;
 	private JButton employerSearchButton;
@@ -61,20 +64,21 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	private JLabel[] studentTextLabels = new JLabel[3];
 	private JTextField[] studentTextFields = new JTextField[3];
 	private JButton addStudentsButton;
+	JPanel addNewStudentpanel;
 
 	/**
 	 * Use this for Item administration. Add components that contain the list,
 	 * search and add to this.
 	 */
 	public StudentSearchGUI() {
-		//myStudent = theStudent;
-		//myEmployers = EmployerCollection.getEmployers(myStudent.getStudentID());
+		super("Find Student To Edit");
 		
 		setLayout(new BorderLayout());
 		myStudentList = getStudentData(null,null);
 		setUpComponents();
 		setVisible(true);
 		setSize(500, 500);
+		setLocationRelativeTo(null);
 	}
 
 	private ArrayList<Student> getStudentData(String searchKeyF,String searchKeyL) {
@@ -82,7 +86,7 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		{
 			myStudentList = StudentCollection.searchByName(searchKeyF, searchKeyL);
 		}else{
-			myStudentList = StudentCollection.getStudents();
+			
 		}
 		if(myStudentList != null){
 			myData = new Object[myStudentList.size()][studentColumnNames.length];
@@ -116,9 +120,10 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 
 		//myAddButton = new JButton("Add Student");
 		//myAddButton.addActionListener(this);
-
-		buttonPanel.add(myListButton);
+		
 		buttonPanel.add(mySearchButton);
+		buttonPanel.add(myListButton);
+		
 
 		//buttonPanel.add(myAddButton);
 		add(buttonPanel, BorderLayout.NORTH);
@@ -127,44 +132,48 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		dataPanel = new JPanel();
 		myTable = new JTable(myData, studentColumnNames);
 		myScrollPane = new JScrollPane(myTable);
-		dataPanel.add(myScrollPane);
+		//dataPanel.add(myScrollPane);
 		myTable.getModel().addTableModelListener(this);
 
 		// Search Panel
 		searchPanel = new JPanel();
+		howtoPanel = new JPanel(new BorderLayout());
+		
+		howtoPanel.add(new JLabel("Enter First and Last Name, ex: John Doe"),BorderLayout.NORTH);
 		titleLabel = new JLabel("Enter Name: ");
-		studentNameTextField = new JTextField(25);
+		studentNameTextField = new JTextField(20);
 		employerSearchButton = new JButton("Search");
 		employerSearchButton.addActionListener(this);
 		searchPanel.add(titleLabel);
 		searchPanel.add(studentNameTextField);
 		searchPanel.add(employerSearchButton);
-
+		howtoPanel.add(searchPanel,BorderLayout.CENTER);
+		
+		dataPanel.add(howtoPanel);
 		// Add Panel
 		addStudentPanel = new JPanel();
 		addStudentPanel.setLayout(new GridLayout(8, 0));
 		
-		String labelNames[] = {"StudentId", "First Name", "Last Name"};
+		String labelNames[] = {"Enter Student Id:", "Enter First Name:", "Enter Last Name:"};
 		
 		for (int i = 0; i < labelNames.length; i++) {
 			JPanel panel = new JPanel();
 			panel.setLayout(new GridLayout(1, 0));
 			studentTextLabels[i] = new JLabel(labelNames[i]);
-			studentTextFields[i] = new JTextField(25);
+			studentTextFields[i] = new JTextField(10);
 			panel.add(studentTextLabels[i]);
 			panel.add(studentTextFields[i]);
 			addStudentPanel.add(panel);
 		}
 
-		JPanel panel = new JPanel();
+		addNewStudentpanel = new JPanel(new BorderLayout());
 		
-		addStudentsButton = new JButton("Add");
+		addStudentsButton = new JButton("Add New Student");
 		addStudentsButton.addActionListener(this);
+		addNewStudentpanel.add(addStudentPanel, BorderLayout.NORTH);
+		addNewStudentpanel.add(addStudentsButton,BorderLayout.CENTER);
 		
-		panel.add(addStudentsButton);
-		
-		addStudentPanel.add(panel);
-		add(dataPanel, BorderLayout.CENTER);
+		add(dataPanel);
 
 	}
 
@@ -173,8 +182,11 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String FirstName;
+		String LastName;
+		
 		if (e.getSource() == myListButton) {
-			
+			if(myData != null){
 			dataPanel.removeAll();
 			myTable = new JTable(myData, studentColumnNames);
 			myTable.getModel().addTableModelListener(this);
@@ -182,10 +194,10 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 			dataPanel.add(myScrollPane);
 			dataPanel.revalidate();
 			this.repaint();
-
+			}
 		} else if (e.getSource() == mySearchButton) {
 			dataPanel.removeAll();
-			dataPanel.add(searchPanel);
+			dataPanel.add(howtoPanel);
 			dataPanel.revalidate();
 			this.repaint();
 		} else if (e.getSource() == myAddButton) {
@@ -197,24 +209,37 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		} else if (e.getSource() == employerSearchButton) {
 			String title = studentNameTextField.getText();
 			String[] st = title.split(" ");
-			String FirstName = st[0];
-			String LastName = st[1];
-			System.out.println();
+			FirstName = st[0];
+			LastName = st[1];
 			if (title.length() > 0 && st.length==2) {
-				st = title.split(title);
-				myStudentList = getStudentData("andrew","klonitsko");
 				
+				myStudentList = getStudentData(FirstName,LastName);
+				studentNameTextField.setText("");
 				dataPanel.removeAll();
 				myTable = new JTable(myData, studentColumnNames);
 				myTable.getModel().addTableModelListener(this);
 				myScrollPane = new JScrollPane(myTable);
-				dataPanel.add(myScrollPane);
+				if(myData.length == 0){
+				JPanel textAdd = new JPanel(new BorderLayout());
+				textAdd.add(new JLabel("Enter A New Student, If Not New Search Again"),BorderLayout.NORTH);
+				textAdd.add(addNewStudentpanel,BorderLayout.CENTER);
+				studentTextFields[1].setText(FirstName);
+				studentTextFields[2].setText(LastName);
+				dataPanel.add(addNewStudentpanel);
+				}else{
+				JPanel nePan = new JPanel(new BorderLayout());
+				nePan.add(new JLabel("To Select A Student: Double Click On Student, Then Press Enter"), BorderLayout.NORTH);
+				nePan.add(myScrollPane,BorderLayout.CENTER);
+				dataPanel.add(nePan);
+				}
+				add(dataPanel);
 				dataPanel.revalidate();
 				this.repaint();
-				studentNameTextField.setText("");
+				
 			}
 		} else if (e.getSource() == addStudentsButton) {
 			performAddItem();
+			
 		}
 
 	}
@@ -236,21 +261,32 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		
 		if (firstNameTemp.length() == 0) {
 			JOptionPane.showMessageDialog(null, "Enter students first name");
-			studentTextFields[0].setFocusable(true);
+			studentTextFields[1].setFocusable(true);
 			return;
 		}
 		
 		String lstNameTemp = studentTextFields[2].getText();
 		if (lstNameTemp.length() == 0) {
 			JOptionPane.showMessageDialog(null, "Enter students last name");
-			studentTextFields[0].setFocusable(true);
+			studentTextFields[2].setFocusable(true);
 			return;
 		}
 		Student temmpStudent;
 		temmpStudent = new Student(firstNameTemp, lstNameTemp);
+		
 		String message = "Student add failed";
 		if (StudentCollection.add(temmpStudent)) {
 			message = "Student added";
+			myStudentList = getStudentData(firstNameTemp,lstNameTemp);
+			dataPanel.removeAll();
+			myTable = new JTable(myData, studentColumnNames);
+			myTable.getModel().addTableModelListener(this);
+			myScrollPane = new JScrollPane(myTable);
+			dataPanel.add(myScrollPane);
+			add(dataPanel);
+			dataPanel.revalidate();
+			this.repaint();
+			
 		}
 		JOptionPane.showMessageDialog(null, message);
 		
@@ -276,7 +312,6 @@ public class StudentSearchGUI extends JFrame implements Observer, ActionListener
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
 			studentToReturn = myStudentList.get(row);
-		
 			firePropertyChange("studentToReturn", null, studentToReturn);
 			
 			setVisible(false);

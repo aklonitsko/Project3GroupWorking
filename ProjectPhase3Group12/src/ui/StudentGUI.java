@@ -22,6 +22,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import academic.AcademicRecord;
 import employment.Employer;
 import employment.EmployerCollection;
 import student.Student;
@@ -38,7 +39,6 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	
 	private ArrayList<Student> myStudentList;
 	private Student studentToReturn;
-	//private Student myStudent;
 	
 	private JButton myListButton;
 	private JButton mySearchButton;
@@ -54,6 +54,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	private JLabel titleLabel;
 	private JTextField employerTextField;
 	private JButton employerSearchButton;
+	private JPanel myTableandText;
 
 	private JPanel addStudentPanel;
 	private JLabel[] studentTextLabels = new JLabel[3];
@@ -123,7 +124,10 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		dataPanel = new JPanel();
 		myTable = new JTable(myData, studentColumnNames);
 		myScrollPane = new JScrollPane(myTable);
-		dataPanel.add(myScrollPane);
+		myTableandText = new JPanel(new BorderLayout());
+		myTableandText.add(new JLabel("To Select Student To Edit: Double Click On Student, Then Press Enter"),BorderLayout.NORTH);
+		myTableandText.add(myScrollPane,BorderLayout.CENTER);
+		dataPanel.add(myTableandText);
 		myTable.getModel().addTableModelListener(this);
 
 		// Search Panel
@@ -170,16 +174,21 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == myListButton) {
+			getStudentData();
 			
 			dataPanel.removeAll();
 			myTable = new JTable(myData, studentColumnNames);
-			myTable.getModel().addTableModelListener(this);
 			myScrollPane = new JScrollPane(myTable);
-			dataPanel.add(myScrollPane);
+			myTableandText = new JPanel(new BorderLayout());
+			myTableandText.add(new JLabel("To Select Student To Edit: Double Click On Student, Then Press Enter"),BorderLayout.NORTH);
+			myTableandText.add(myScrollPane,BorderLayout.CENTER);
+			myTable.getModel().addTableModelListener(this);
+			dataPanel.add(myTableandText);
 			dataPanel.revalidate();
 			this.repaint();
 
 		} else if (e.getSource() == mySearchButton) {
+			
 			dataPanel.removeAll();
 			dataPanel.add(searchPanel);
 			dataPanel.revalidate();
@@ -238,6 +247,8 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		}
 		Student temmpStudent;
 		temmpStudent = new Student(firstNameTemp, lstNameTemp);
+		
+		
 		String message = "Student add failed";
 		if (StudentCollection.add(temmpStudent)) {
 			message = "Student added";
@@ -251,8 +262,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 	 */
 	@Override
 	public void tableChanged(TableModelEvent theEvent) {
-		// add something here that can get the student box clicked and pass it to the main GUI for the other gui
-		//classes to use
+		
 		int row = theEvent.getFirstRow();
 		int column = theEvent.getColumn();
 		
@@ -265,7 +275,7 @@ public class StudentGUI extends JPanel implements Observer, ActionListener, Tabl
 		if (data != null && ((String) data).length() != 0) {
 			Student tempStudent = myStudentList.get(row);
 			studentToReturn = myStudentList.get(row);
-			System.out.println(tempStudent.getID());
+			firePropertyChange("studentfornext", null, studentToReturn);
 			if (!StudentCollection.update(tempStudent, columnName, (String)data)) {
 				JOptionPane.showMessageDialog(null, "Update failed");
 			}
