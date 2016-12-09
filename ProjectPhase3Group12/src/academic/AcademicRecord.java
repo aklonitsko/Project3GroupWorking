@@ -34,6 +34,7 @@ public class AcademicRecord extends Observable {
 	private String myExternalEmail;
 	private double myGPA;
 	private ArrayList<TransferSchool> myTransferSchools;
+	private boolean isTransfer = false;
 	
 	public AcademicRecord(String theAcademicID, String theStudentID, String theProgram, String theDegreeLevel, String theGraduationTerm, 
 			String theGraduationYear, String theUWEmail, String theExternalEmail, double theGPA, ArrayList<TransferSchool> theTransferSchools) {
@@ -174,6 +175,14 @@ public class AcademicRecord extends Observable {
 			hasChanged();
 			notifyObservers(TRANSFER_SCHOOLS);
 		}
+	}
+	
+	public boolean isTransfer() {
+		if(myTransferSchools != null) {
+			isTransfer = true;
+		}
+		
+		return isTransfer;
 	}
 
 	public boolean addTransferSchool(TransferSchool theTransferSchool){
