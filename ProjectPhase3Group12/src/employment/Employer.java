@@ -124,7 +124,7 @@ public class Employer extends Observable {
 	public void setCompanyName(String theCompanyName) {
 		
 		this.myCompanyName = theCompanyName;
-		EmployerCollection.update(this, "companyName", myCompanyName);
+		EmployerCollection.update(this, "name", myCompanyName);
 		hasChanged();
 		notifyObservers(COMPANY_NAME);
 	}
