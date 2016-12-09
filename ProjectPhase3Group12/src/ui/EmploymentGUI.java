@@ -125,7 +125,7 @@ implements ActionListener,TableModelListener {
 		}catch(Exception e){}
 		//This populates the employer matrices all well as sets the employer to add skills to as the first one in the list
 		if(mEmployerList != null){
-			emptoaddSkills = mEmployerList.get(0);
+			
 			mData = new Object[mEmployerList.size()][mEmploymentColumnNames.length];
 			for (int i = 0; i < mEmployerList.size(); i++) {
 				mData[i][0] = mEmployerList.get(i).getCompanyName();
@@ -169,15 +169,16 @@ implements ActionListener,TableModelListener {
 		mPnlList = new JPanel();
 		
 		//create a panel for center of main panel
-		mPnlBothList = new JPanel(new GridLayout(2,0));
+		mPnlBothList = new JPanel(new BorderLayout());
 		mTable = new JTable(mData,mEmploymentColumnNames);
 		mScrollPane = new JScrollPane(mTable);
-		mPnlBothList.add(mScrollPane);
+		mPnlBothList.add(new JLabel("*To Add Skills To Different Employers: Double Click A Cell Then Press Enter,Then Select Add Skills"),BorderLayout.NORTH);
+		mPnlBothList.add(mScrollPane,BorderLayout.CENTER);
 		mTable.getModel().addTableModelListener(this);
 	
-		mSkillTable = new JTable(mSkillData,mSkillColumnNames);
-		mSkillScrollPane = new JScrollPane(mSkillTable);
-		mPnlBothList.add(mSkillScrollPane);
+		//mSkillTable = new JTable(mSkillData,mSkillColumnNames);
+		//mSkillScrollPane = new JScrollPane(mSkillTable);
+		//mPnlBothList.add(mSkillScrollPane);
 		
 		mPnlList.add(mPnlBothList);
 		
@@ -223,11 +224,13 @@ implements ActionListener,TableModelListener {
 			
 		}
 		//Add new Skill
-		mPnlAddSkill = new JPanel();
-		mTxfLabelEmployerText = new JLabel("You are adding skills to:    ");
 		
+		mPnlAddSkill = new JPanel();
+		if(mEmployerList != null){
+		emptoaddSkills = mEmployerList.get(0);
+		mTxfLabelEmployerText = new JLabel("You are adding skills to:    ");
 		mTxfLabelEmployerID= new JLabel(emptoaddSkills.getCompanyName());
-		mTxfSkillLabel= new JLabel("Add A Skill: ");;
+		mTxfSkillLabel= new JLabel("Add A Skill: ");
 		mTxfSkill = new JTextField(8);
 		mBtnAddSkillToEmp = new JButton("Add Skill");
 		mBtnAddSkillToEmp.addActionListener(this);
@@ -237,7 +240,9 @@ implements ActionListener,TableModelListener {
 		mPnlAddSkill.add(mTxfSkillLabel);
 		mPnlAddSkill.add(mTxfSkill);
 		mPnlAddSkill.add(mBtnAddSkillToEmp);
-		
+		}else{
+			mPnlAddSkill.add(new JLabel("ADD An Employer First"));
+		}
 		
 		JPanel mPanel = new JPanel();
 		mBtnAddEmployment = new JButton("Add");
@@ -253,8 +258,17 @@ implements ActionListener,TableModelListener {
 	
 		if(e.getSource() == mBtnEmploymentList){
 			mEmployerList = getData(mStudent);
+			
 			mPnlList.removeAll();
 			
+			mPnlBothList = new JPanel(new BorderLayout());
+			mTable = new JTable(mData,mEmploymentColumnNames);
+			mScrollPane = new JScrollPane(mTable);
+			
+			mPnlBothList.add(new JLabel("*To Add Skills To Different Employers: Double Click A Cell Then Press Enter,Then Select Add Skills"),BorderLayout.NORTH);
+			mPnlBothList.add(mScrollPane,BorderLayout.CENTER);
+			
+			mTable.getModel().addTableModelListener(this);
 			mPnlList.add(mPnlBothList);
 			
 			mPnlList.revalidate();
@@ -267,26 +281,40 @@ implements ActionListener,TableModelListener {
 			this.repaint();
 			
 		}  else if(e.getSource() == mBtnAddSkills){
-			
+			System.out.println(emptoaddSkills.getCompanyName());
 			if(emptoaddSkills.getCompanyName() != null){
+			mEmployerList = getData(mStudent);	
 			mPnlList.removeAll();
+			
+			getSkillData();
 			mPnlAddSkill = new JPanel();
 			mTxfLabelEmployerText = new JLabel("You are adding skills to:    ");
+			JPanel borderla = new JPanel(new BorderLayout());
+			
+			mSkillTable = new JTable(mSkillData,mSkillColumnNames);
+			mSkillScrollPane = new JScrollPane(mSkillTable);
 			
 			mTxfLabelEmployerID= new JLabel(emptoaddSkills.getCompanyName());
-			mTxfSkillLabel= new JLabel("Add A Skill: ");;
+			mTxfSkillLabel= new JLabel("Add A Skill: ");
 			mTxfSkill = new JTextField(8);
+			
 			mBtnAddSkillToEmp = new JButton("Add Skill");
 			mBtnAddSkillToEmp.addActionListener(this);
+			
 			mPnlAddSkill.setLayout(new GridLayout(3,2));
 			mPnlAddSkill.add(mTxfLabelEmployerText);
 			mPnlAddSkill.add(mTxfLabelEmployerID);
 			mPnlAddSkill.add(mTxfSkillLabel);
 			mPnlAddSkill.add(mTxfSkill);
 			mPnlAddSkill.add(mBtnAddSkillToEmp);
-			mPnlList.add(mPnlAddSkill);
+			
+			borderla.add(mSkillScrollPane, BorderLayout.NORTH);
+			borderla.add(mPnlAddSkill,BorderLayout.CENTER);
+			
+			mPnlList.add(borderla);
 			mPnlList.revalidate();
-			this.repaint();}
+			this.repaint();
+			}
 			else{
 				JOptionPane.showMessageDialog(null, "Select an employer from the list");
 			}
@@ -297,6 +325,42 @@ implements ActionListener,TableModelListener {
 			
 		}  else if(e.getSource() == mBtnAddSkillToEmp){
 			performAddSkills();
+			if(emptoaddSkills.getCompanyName() != null){
+				mEmployerList = getData(mStudent);	
+				mPnlList.removeAll();
+				
+				getSkillData();
+				mPnlAddSkill = new JPanel();
+				mTxfLabelEmployerText = new JLabel("You are adding skills to:    ");
+				JPanel borderla = new JPanel(new BorderLayout());
+				
+				mSkillTable = new JTable(mSkillData,mSkillColumnNames);
+				mSkillScrollPane = new JScrollPane(mSkillTable);
+				
+				mTxfLabelEmployerID= new JLabel(emptoaddSkills.getCompanyName());
+				mTxfSkillLabel= new JLabel("Add A Skill: ");;
+				mTxfSkill = new JTextField(8);
+				
+				mBtnAddSkillToEmp = new JButton("Add Skill");
+				mBtnAddSkillToEmp.addActionListener(this);
+				
+				mPnlAddSkill.setLayout(new GridLayout(3,2));
+				mPnlAddSkill.add(mTxfLabelEmployerText);
+				mPnlAddSkill.add(mTxfLabelEmployerID);
+				mPnlAddSkill.add(mTxfSkillLabel);
+				mPnlAddSkill.add(mTxfSkill);
+				mPnlAddSkill.add(mBtnAddSkillToEmp);
+				
+				borderla.add(mSkillScrollPane, BorderLayout.NORTH);
+				borderla.add(mPnlAddSkill,BorderLayout.CENTER);
+				
+				mPnlList.add(borderla);
+				mPnlList.revalidate();
+				this.repaint();
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "Select an employer from the list");
+				}
 			
 		}
 			
@@ -313,10 +377,10 @@ implements ActionListener,TableModelListener {
 			mTxfSkill.setFocusable(true);
 			return;
 		}
-		String message = "Employer add failed";
+		String message = "Skill add failed";
 		try{
 			emptoaddSkills.addSkill(mEmpName);
-			message = "Employer added";
+			message = "Skill Added";
 		}catch(Exception a){
 			
 		}
@@ -392,11 +456,17 @@ implements ActionListener,TableModelListener {
 		JOptionPane.showMessageDialog(null, message);
 
 		// Clear all text fields.
-		for (int i = 0; i < txfField.length; i++) {
-			if (txfField[i].getText().length() != 0) {
-				txfField[i].setText("");
-			}
-		}
+		
+		txfField[0].setText("");
+		txfField[1].setText("");
+		txfField[3].setText("");
+		txfField[6].setText("");
+		txfField[7].setText("");
+		txfField[8].setText("");
+			
+				
+			
+		
 		
 	}
 
@@ -414,6 +484,7 @@ implements ActionListener,TableModelListener {
 			try{
 			Employer item = mEmployerList.get(row);
 			emptoaddSkills = item;
+			
 			if (columnName == "name") {
 				mStudent.getEmployer(item.getID()).setCompanyName((String)data);
 			}
