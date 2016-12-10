@@ -70,6 +70,9 @@ public class ReportFilterOptionsGUI extends JPanel implements ActionListener {
 		radioButtonPanel.add(programRadioButton);
 		radioButtonPanel.add(degreeLevelRadioButton);
 		
+		btnOk.addActionListener(this);
+		btnCancel.addActionListener(this);
+		
 		outerFrame.add(this);
 		outerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		outerFrame.pack();
@@ -79,11 +82,17 @@ public class ReportFilterOptionsGUI extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent theEvent) {
 		if(theEvent.getSource() == btnOk) {
-			transferFilter = transferCheckBox.isSelected();
-			degreeLevelFilter = degreeLevelRadioButton.isSelected();
-			programFilter = programRadioButton.isSelected();
+			if(transferCheckBox.isSelected()) {
+				propertyChangeObj.firePropertyChange("TRANSFERSELECTED", reportType, true);
+			}
+			if(degreeLevelRadioButton.isSelected() == true) {
+				propertyChangeObj.firePropertyChange("DEGREELEVELSELECTED", reportType, true);
+			}
+			if(programRadioButton.isSelected() == true) {
+				propertyChangeObj.firePropertyChange("PROGRAMSELECTED", reportType, true);
+			}
 			
-			propertyChangeObj.firePropertyChange("selected", "Null", this);
+			outerFrame.setVisible(false);
 			
 		} else if(theEvent.getSource() == btnCancel) {
 			outerFrame.dispose();
